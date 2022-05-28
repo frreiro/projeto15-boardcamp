@@ -9,8 +9,8 @@ export async function readRentals(req, res) {
 
     try {
         let rentals = null;
-        if (customerId) rentals = await readCustomerId(customerId);
-        else if (gameId) rentals = await readGameId(gameId)
+        if (customerId) rentals = await readSpecificId('customers', customerId);
+        else if (gameId) rentals = await readSpecificId('games', gameId)
         else rentals = await readAll();
 
         const totalRental = []
@@ -30,8 +30,16 @@ export async function readRentals(req, res) {
 async function readAll() {
     const resultRentals = await connection.query(`
         SELECT rentals.*
-        , '{"id": "'|| games.id ||'","name":"'|| games.name ||'","categoryId":"'|| games."categoryId"|| '","categoryName":"' || categories.name ||'"}' as game 
-        , '{"id": "'|| customers.id ||'","name":"'|| customers.name ||'"}' as customer
+        , '{"id": "'|| games.id 
+        ||'","name":"'|| games.name 
+        ||'","categoryId":"'|| games."categoryId"
+        || '","categoryName":"' || categories.name 
+        ||'"}' as game 
+
+        , '{"id": "'|| customers.id 
+        ||'","name":"'|| customers.name 
+        ||'"}' as customer
+
         FROM rentals 
         JOIN games ON rentals."gameId" = games.id
         JOIN categories ON games."categoryId" = categories.id
@@ -40,33 +48,28 @@ async function readAll() {
     return resultRentals.rows;
 }
 
-async function readCustomerId(id) {
+async function readSpecificId(dbName, id) {
     const resultRentals = await connection.query(`
     SELECT rentals.*
-    , '{"id": "'|| games.id ||'","name":"'|| games.name ||'","categoryId":"'|| games."categoryId"|| '","categoryName":"' || categories.name ||'"}' as game 
-    , '{"id": "'|| customers.id ||'","name":"'|| customers.name ||'"}' as customer
+    , '{"id": "'|| games.id 
+    ||'","name":"'|| games.name 
+    ||'","categoryId":"'|| games."categoryId"
+    || '","categoryName":"' || categories.name 
+    ||'"}' as game 
+
+    , '{"id": "'|| customers.id 
+    ||'","name":"'|| customers.name 
+    ||'"}' as customer
+    
     FROM rentals 
     JOIN games ON rentals."gameId" = games.id
     JOIN categories ON games."categoryId" = categories.id
     JOIN customers ON rentals."customerId" = customers.id
-    WHERE customers.id = $1
+    WHERE ${dbName}.id = $1
     `, [id]);
     return resultRentals.rows;
 }
 
-async function readGameId(id) {
-    const resultRentals = await connection.query(`
-    SELECT rentals.*
-    , '{"id": "'|| games.id ||'","name":"'|| games.name ||'","categoryId":"'|| games."categoryId"|| '","categoryName":"' || categories.name ||'"}' as game 
-    , '{"id": "'|| customers.id ||'","name":"'|| customers.name ||'"}' as customer
-    FROM rentals 
-    JOIN games ON rentals."gameId" = games.id
-    JOIN categories ON games."categoryId" = categories.id
-    JOIN customers ON rentals."customerId" = customers.id
-    WHERE games.id = $1
-    `, [id]);
-    return resultRentals.rows;
-}
 //TODO: Validar no middleware
 export async function insertRent(req, res) {
     const { customerId, gameId, daysRented } = req.body;
@@ -137,4 +140,21 @@ function calculateTaxes(rental) {
     if (daysDiff > 0) delayFee = pricePerDay * daysDiff;
 
     return { delayFee, returnDate: today.format('YYYY-MM-DD') }
+}
+
+
+//TODO: middlewares
+export async function deleteRent(req, res) {
+    const { id } = req.params;
+
+    try {
+        await connection.query(`
+        DELETE FROM rentals 
+        WHERE id=$1
+        `, [id]);
+
+        res.sendStatus(200);
+    } catch (e) {
+        res.sendStatus(500);
+    }
 }
