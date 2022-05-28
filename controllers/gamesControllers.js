@@ -1,14 +1,28 @@
 import connection from "../database.js";
 
 export async function readGames(req, res) {
-    try {
-        const result = await connection.query(`
-        SELECT * 
-        FROM games
-        `);
+    const { name } = req.query;
+    console.log(name)
 
-        res.send(result.rows);
+    try {
+        if (name) {
+            const result = await connection.query(`
+            SELECT * 
+            FROM games
+            WHERE name LIKE ''||$1||'%';
+            `, [name]);
+
+            return res.send(result.rows);
+        } else {
+            const result = await connection.query(`
+            SELECT * 
+            FROM games
+            `);
+
+            return res.send(result.rows);
+        }
     } catch (e) {
+        console.log(e)
         res.sendStatus(500);
     }
 }
