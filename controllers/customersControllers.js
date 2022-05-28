@@ -12,6 +12,7 @@ export async function readCustomers(req, res) {
             WHERE cpf LIKE $1||'%'
             `, [cpf])
             res.send(result.rows);
+
         } else {
             const result = await connection.query(`
             SELECT * 

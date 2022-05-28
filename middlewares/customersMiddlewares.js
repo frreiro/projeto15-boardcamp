@@ -60,3 +60,23 @@ export async function customerValidate(req, res, next) {
     if (error) return res.status(400).send('Falha ao cadastrar o usuário');
     else next();
 }
+
+
+export async function hasEqualCpf(req, res, next) {
+    const { id } = req.params
+    const { cpf } = req.body;
+
+    try {
+        const result = await connection.query(` 
+        SELECT cpf
+        FROM customers
+        WHERE cpf = $1 and id != $2
+        `, [cpf, id]);
+
+        if (result.rows.length > 0) return res.status(409).send('Cpf já cadastrada')
+        else next();
+
+    } catch (e) {
+        res.sendStatus(500);
+    }
+}
