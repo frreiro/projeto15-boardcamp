@@ -92,12 +92,9 @@ export async function insertRent(req, res) {
         console.log(e)
         res.sendStatus(500);
     }
-
-    console.log()
 }
 
 
-//TODO: Descobrir como diferencia as datas
 //TODO: middlewares
 export async function returnRent(req, res) {
     const { id } = req.params;
