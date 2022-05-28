@@ -47,3 +47,17 @@ export async function updateCustomer(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function readOneCustomers(req, res) {
+    const { id } = req.params;
+    try {
+        const result = await connection.query(`
+        SELECT * 
+        FROM customers 
+        WHERE customers.id = $1
+        `, [id])
+        res.send(result.rows);
+    } catch (e) {
+        res.sendStatus(500);
+    }
+}
