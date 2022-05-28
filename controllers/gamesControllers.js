@@ -9,7 +9,7 @@ export async function readGames(req, res) {
             const result = await connection.query(`
             SELECT * 
             FROM games
-            WHERE name LIKE ''||$1||'%';
+            WHERE name LIKE $1||'%';
             `, [name]);
 
             return res.send(result.rows);
