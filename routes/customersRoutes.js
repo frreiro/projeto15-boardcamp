@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { insertCustomer, readCustomers } from "../controllers/customersControllers.js";
+import { insertCustomer, readCustomers, updateCustomer } from "../controllers/customersControllers.js";
 import { hasCustomer } from "../middlewares/customersMiddlewares.js";
 
 const customersRouters = Router();
@@ -7,5 +7,6 @@ const customersRouters = Router();
 
 customersRouters.get('/customers', readCustomers);
 customersRouters.post('/customers', hasCustomer, insertCustomer);
+customersRouters.put('/customers/:id', updateCustomer)
 
 export default customersRouters;
