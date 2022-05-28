@@ -1,13 +1,12 @@
 import { Router } from "express";
 import { insertCategory, readCategories } from "../controllers/categoriesController.js"
-import { hasCategory } from "../middlewares/categoriesMiddlewares.js";
+import { hasCategory, emptyBodyValidate } from "../middlewares/categoriesMiddlewares.js";
 
 
 
 const categoriesRouters = Router();
 
-//TODO: criar validações gerais -> joi -> body vazio 
 categoriesRouters.get('/categories', readCategories);
-categoriesRouters.post('/categories', hasCategory, insertCategory)
+categoriesRouters.post('/categories', emptyBodyValidate, hasCategory, insertCategory)
 
 export default categoriesRouters;

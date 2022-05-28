@@ -1,6 +1,17 @@
 import connection from '.././database.js'
+import Joi from "joi";
 
-//TODO: Validar o joi o body
+//TODO: melhorar a validação (letra maiusculas, etc)
+export async function emptyBodyValidate(req, res, next) {
+    const body = req.body;
+    console.log(body);
+
+    const categorySchema = Joi.object({ name: Joi.string().required() })
+    const { error } = categorySchema.validate(body);
+    if (error) return res.status(400).send('Falha ao cadastrar a categoria')
+    else next();
+
+}
 
 export async function hasCategory(req, res, next) {
     const { name } = req.body;
