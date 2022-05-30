@@ -95,7 +95,6 @@ export async function insertRent(req, res) {
 }
 
 
-//TODO: middlewares
 export async function returnRent(req, res) {
     const { id } = req.params;
 
@@ -107,7 +106,6 @@ export async function returnRent(req, res) {
         WHERE id = $1`, [id])).rows[0];
 
         const { delayFee, returnDate } = calculateTaxes(rental)
-        console.log(delayFee, returnDate)
 
         await connection.query(`
         UPDATE rentals 

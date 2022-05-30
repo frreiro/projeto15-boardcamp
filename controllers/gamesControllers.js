@@ -2,21 +2,23 @@ import connection from "../database.js";
 
 export async function readGames(req, res) {
     const { name } = req.query;
-    console.log(name)
 
     try {
         if (name) {
             const result = await connection.query(`
-            SELECT * 
+            SELECT games.*, categories.name as "categoryName"
             FROM games
+            JOIN categories ON games."categoryId" = categories.id
             WHERE name LIKE $1||'%';
             `, [name]);
+
 
             return res.send(result.rows);
         } else {
             const result = await connection.query(`
-            SELECT * 
+            SELECT games.*, categories.name as "categoryName"
             FROM games
+            JOIN categories ON games."categoryId" = categories.id
             `);
 
             return res.send(result.rows);
@@ -27,7 +29,6 @@ export async function readGames(req, res) {
     }
 }
 
-//TODO: validar entrada por middleware
 export async function insertGame(req, res) {
     const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
     try {

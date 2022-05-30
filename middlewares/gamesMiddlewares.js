@@ -2,7 +2,6 @@ import connection from '.././database.js'
 import Joi from 'joi';
 
 
-//TODO: validar por joi o body
 export async function gameValidate(req, res, next) {
     const body = req.body;
 
@@ -31,7 +30,6 @@ export async function gameValidate(req, res, next) {
 
 }
 
-//TODO: descobrir um jeito de refatorar esse middleware com o de categorias
 export async function hasGame(req, res, next) {
     const { name } = req.body;
 
