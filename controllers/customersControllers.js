@@ -7,8 +7,8 @@ export async function readCustomers(req, res) {
 
         if (cpf) {
             const result = await connection.query(`
-            SELECT * 
-            FROM customers 
+            SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') AS birthday 
+            FROM customers
             WHERE cpf LIKE $1||'%'
             `, [cpf])
             res.send(result.rows);
@@ -41,7 +41,6 @@ export async function insertCustomer(req, res) {
     }
 
 }
-//TODO: validar no joi -> middleware
 export async function updateCustomer(req, res) {
     const { id } = req.params;
     const { name, phone, cpf, birthday } = req.body;
@@ -65,11 +64,12 @@ export async function readOneCustomers(req, res) {
     const { id } = req.params;
     try {
         const result = await connection.query(`
-        SELECT * 
-        FROM customers 
+        SELECT id, name, phone, cpf, to_char(birthday, 'YYYY-MM-DD') AS birthday 
+        FROM customers
         WHERE customers.id = $1
         `, [id])
-        res.send(result.rows);
+
+        res.send(result.rows[0]);
     } catch (e) {
         res.sendStatus(500);
     }

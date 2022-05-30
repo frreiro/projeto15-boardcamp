@@ -26,7 +26,6 @@ export async function hasNoCustomer(req, res, next) {
 }
 
 
-//TODO: validar mais de um parâmetro (nome, cpf e telefone)
 export async function hasCustomer(req, res, next) {
     const { cpf } = req.body;
 
@@ -56,7 +55,6 @@ export async function customerValidate(req, res, next) {
     })
 
     const { error } = customerShema.validate(body)
-    console.log(error)
     if (error) return res.status(400).send('Falha ao cadastrar o usuário');
     else next();
 }
